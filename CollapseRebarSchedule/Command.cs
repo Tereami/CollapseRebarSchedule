@@ -10,14 +10,17 @@ as long as you credit the author by linking back and license your new creations 
 This code is provided 'as is'. Author disclaims any implied warranty.
 Zuev Aleksandr, 2020, all rigths reserved.
 */
+#endregion
+#region usings
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Autodesk.Revit.DB; //для работы с элементами модели Revit
-using Autodesk.Revit.UI; //для работы с элементами интерфейса
-using Autodesk.Revit.UI.Selection; //работы с выделенными элементами
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
+using Autodesk.Revit.UI.Selection;
+#endregion
 
 namespace CollapseRebarSchedule
 {

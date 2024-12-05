@@ -95,12 +95,16 @@ namespace CollapseRebarSchedule
 
                 for (int i = firstWeightCell; i < borderCell; i++)
                 {
+                    if (!sdef.IsValidFieldIndex(i))
+                    {
+                        throw new System.Exception($"Field index {i} is not valid.");
+                    }
                     ScheduleField sfield = sdef.GetField(i);
+
                     fieldsState.Add(i, sfield.IsHidden);
                     sfield.IsHidden = false;
                     allFields++;
                 }
-
 
                 doc.Regenerate();
 

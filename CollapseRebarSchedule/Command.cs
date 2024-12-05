@@ -12,14 +12,11 @@ Zuev Aleksandr, 2020, all rigths reserved.
 */
 #endregion
 #region usings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using System.Collections.Generic;
+using System.Linq;
 #endregion
 
 namespace CollapseRebarSchedule
@@ -35,10 +32,17 @@ namespace CollapseRebarSchedule
             if (vs == null)
             {
                 Selection sel = commandData.Application.ActiveUIDocument.Selection;
-                if (sel.GetElementIds().Count == 0) return Result.Failed;
+                if (sel.GetElementIds().Count == 0)
+                {
+                    TaskDialog.Show("Ошибка", "Откройте или выделите на листе Ведомость расхода стали");
+                    return Result.Failed;
+                }
                 ScheduleSheetInstance ssi = doc.GetElement(sel.GetElementIds().First()) as ScheduleSheetInstance;
-                if (ssi == null) return Result.Failed;
-                if (!ssi.Name.Contains("ВРС")) return Result.Failed;
+                if (ssi == null || !IsTableNameCorrect(ssi.Name))
+                {
+                    TaskDialog.Show("Ошибка", "Откройте или выделите на листе Ведомость расхода стали");
+                    return Result.Failed;
+                }
                 vs = doc.GetElement(ssi.ScheduleId) as ViewSchedule;
             }
             sdef = vs.Definition;
@@ -49,6 +53,7 @@ namespace CollapseRebarSchedule
             int borderCell = 9999;
 
             //определяю первую и последнюю ячейку с массой
+            bool flagEndCellFound = false;
             for (int i = 0; i < sdef.GetFieldCount(); i++)
             {
                 ScheduleField sfield = sdef.GetField(i);
@@ -70,10 +75,18 @@ namespace CollapseRebarSchedule
                 if (cellName.StartsWith("="))
                 {
                     borderCell = i;
+                    flagEndCellFound = true;
                     break;
                 }
             }
 
+            if (!flagEndCellFound)
+            {
+                TaskDialog.Show("Ошибка", "Не найден столбец, отделяющий скрытые расчетные столбы. Имя столбца должно начинаться с символа =");
+                return Result.Failed;
+            }
+
+            int allFields = 0, hiddenFields = 0;
             using (Transaction t = new Transaction(doc))
             {
                 t.Start("Отобразить все ячейки");
@@ -82,6 +95,7 @@ namespace CollapseRebarSchedule
                     ScheduleField sfield = sdef.GetField(i);
                     string cellName = sfield.GetName();
                     sfield.IsHidden = false;
+                    allFields++;
                 }
 
 
@@ -109,12 +123,13 @@ namespace CollapseRebarSchedule
                     if (checkOnlyTextAndZeros)
                     {
                         sfield.IsHidden = true;
+                        hiddenFields++;
                     }
                 }
                 t.Commit();
-
-
             }
+            int openedFields = allFields - hiddenFields;
+            BalloonTip.Show("Отчет", $"Выполнено! Полей найдено {allFields}, отображено {openedFields}");
             return Result.Succeeded;
         }
 
@@ -149,6 +164,13 @@ namespace CollapseRebarSchedule
             {
                 return true;
             }
+            return false;
+        }
+
+        private bool IsTableNameCorrect(string name)
+        {
+            if (name.Contains("ВРС") || name.Contains("calculation")) return true;
+
             return false;
         }
     }

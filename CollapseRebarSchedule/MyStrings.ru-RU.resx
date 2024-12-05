@@ -129,11 +129,17 @@
   <data name="Result" xml:space="preserve">
     <value>Отчет</value>
   </data>
-  <data name="ResultMessage1" xml:space="preserve">
-    <value>Выполнено! Полей найдено</value>
+  <data name="ResultMessage" xml:space="preserve">
+    <value>Выполнено!</value>
   </data>
-  <data name="ResultMessage2" xml:space="preserve">
-    <value>отображено</value>
+  <data name="ResultMessageHidden" xml:space="preserve">
+    <value>Скрыто столбцов</value>
+  </data>
+  <data name="ResultMessageOpened" xml:space="preserve">
+    <value>Отображено скрытых столбцов</value>
+  </data>
+  <data name="ResultNoFields" xml:space="preserve">
+    <value>Нет скрытых или отображенных ячеек. Обновление таблицы не требуется.</value>
   </data>
   <data name="TransactionName" xml:space="preserve">
     <value>Отобразить все ячейки</value>

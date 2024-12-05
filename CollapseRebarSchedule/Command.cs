@@ -34,13 +34,13 @@ namespace CollapseRebarSchedule
                 Selection sel = commandData.Application.ActiveUIDocument.Selection;
                 if (sel.GetElementIds().Count == 0)
                 {
-                    TaskDialog.Show(MyStrings.Error, MyStrings.ErrorNoSelectedSchedule);
+                    message = MyStrings.ErrorNoSelectedSchedule;
                     return Result.Failed;
                 }
                 ScheduleSheetInstance ssi = doc.GetElement(sel.GetElementIds().First()) as ScheduleSheetInstance;
                 if (ssi == null || !IsTableNameCorrect(ssi.Name))
                 {
-                    TaskDialog.Show(MyStrings.Error, MyStrings.ErrorNoSelectedSchedule);
+                    message = MyStrings.ErrorNoSelectedSchedule;
                     return Result.Failed;
                 }
                 vs = doc.GetElement(ssi.ScheduleId) as ViewSchedule;
@@ -82,18 +82,21 @@ namespace CollapseRebarSchedule
 
             if (!flagEndCellFound)
             {
-                TaskDialog.Show(MyStrings.Error, MyStrings.ErrorNoEndColumn);
+                message = MyStrings.ErrorNoEndColumn;
                 return Result.Failed;
             }
 
-            int allFields = 0, hiddenFields = 0;
+            int allFields = 0, hiddenFields = 0, openedFields = 0;
             using (Transaction t = new Transaction(doc))
             {
                 t.Start(MyStrings.TransactionName);
+
+                Dictionary<int, bool> fieldsState = new Dictionary<int, bool>();
+
                 for (int i = firstWeightCell; i < borderCell; i++)
                 {
                     ScheduleField sfield = sdef.GetField(i);
-                    string cellName = sfield.GetName();
+                    fieldsState.Add(i, sfield.IsHidden);
                     sfield.IsHidden = false;
                     allFields++;
                 }
@@ -110,7 +113,6 @@ namespace CollapseRebarSchedule
                 for (int i = firstWeightCell; i < borderCell; i++)
                 {
                     ScheduleField sfield = sdef.GetField(i);
-                    string cellName = sfield.GetName();
 
                     List<string> values = new List<string>();
                     for (int j = firstRownumber; j <= lastRowNumber; j++)
@@ -122,14 +124,36 @@ namespace CollapseRebarSchedule
                     bool checkOnlyTextAndZeros = OnlyTextAndZeros(values);
                     if (checkOnlyTextAndZeros)
                     {
+                        if (fieldsState[i] == false)
+                            hiddenFields++;
+
                         sfield.IsHidden = true;
-                        hiddenFields++;
+                    }
+                    else
+                    {
+                        if (fieldsState[i] == true)
+                            openedFields++;
                     }
                 }
                 t.Commit();
             }
-            int openedFields = allFields - hiddenFields;
-            BalloonTip.Show(MyStrings.Result, $"{MyStrings.ResultMessage1} {allFields}, {MyStrings.ResultMessage2} {openedFields}");
+
+            string msg = "";
+            if (hiddenFields == 0 && openedFields == 0)
+            {
+                msg = MyStrings.ResultNoFields;
+            }
+            else
+            {
+                List<string> messages = new List<string>
+                {
+                    MyStrings.ResultMessage,
+                    $"{MyStrings.ResultMessageHidden}: {hiddenFields}",
+                    $"{MyStrings.ResultMessageOpened}: {openedFields}",
+                };
+                msg = string.Join(System.Environment.NewLine, messages);
+            }
+            BalloonTip.Show(MyStrings.Result, msg);
             return Result.Succeeded;
         }
 

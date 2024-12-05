@@ -99,18 +99,36 @@ namespace CollapseRebarSchedule {
         /// <summary>
         ///   Looks up a localized string similar to Done! Fields found.
         /// </summary>
-        public static string ResultMessage1 {
+        public static string ResultMessage {
             get {
-                return ResourceManager.GetString("ResultMessage1", resourceCulture);
+                return ResourceManager.GetString("ResultMessage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to opened.
+        ///   Looks up a localized string similar to Hide fields.
         /// </summary>
-        public static string ResultMessage2 {
+        public static string ResultMessageHidden {
             get {
-                return ResourceManager.GetString("ResultMessage2", resourceCulture);
+                return ResourceManager.GetString("ResultMessageHidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opened fields.
+        /// </summary>
+        public static string ResultMessageOpened {
+            get {
+                return ResourceManager.GetString("ResultMessageOpened", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No hidden or opened fields. No schedule update required..
+        /// </summary>
+        public static string ResultNoFields {
+            get {
+                return ResourceManager.GetString("ResultNoFields", resourceCulture);
             }
         }
         

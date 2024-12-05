@@ -129,11 +129,17 @@
   <data name="Result" xml:space="preserve">
     <value>Result</value>
   </data>
-  <data name="ResultMessage1" xml:space="preserve">
+  <data name="ResultMessage" xml:space="preserve">
     <value>Done! Fields found</value>
   </data>
-  <data name="ResultMessage2" xml:space="preserve">
-    <value>opened</value>
+  <data name="ResultMessageHidden" xml:space="preserve">
+    <value>Hide fields</value>
+  </data>
+  <data name="ResultMessageOpened" xml:space="preserve">
+    <value>Opened fields</value>
+  </data>
+  <data name="ResultNoFields" xml:space="preserve">
+    <value>No hidden or opened fields. No schedule update required.</value>
   </data>
   <data name="TransactionName" xml:space="preserve">
     <value>Collapse rebar schedule</value>

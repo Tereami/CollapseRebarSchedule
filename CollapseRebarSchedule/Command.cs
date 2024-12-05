@@ -34,13 +34,13 @@ namespace CollapseRebarSchedule
                 Selection sel = commandData.Application.ActiveUIDocument.Selection;
                 if (sel.GetElementIds().Count == 0)
                 {
-                    TaskDialog.Show("Ошибка", "Откройте или выделите на листе Ведомость расхода стали");
+                    TaskDialog.Show(MyStrings.Error, MyStrings.ErrorNoSelectedSchedule);
                     return Result.Failed;
                 }
                 ScheduleSheetInstance ssi = doc.GetElement(sel.GetElementIds().First()) as ScheduleSheetInstance;
                 if (ssi == null || !IsTableNameCorrect(ssi.Name))
                 {
-                    TaskDialog.Show("Ошибка", "Откройте или выделите на листе Ведомость расхода стали");
+                    TaskDialog.Show(MyStrings.Error, MyStrings.ErrorNoSelectedSchedule);
                     return Result.Failed;
                 }
                 vs = doc.GetElement(ssi.ScheduleId) as ViewSchedule;
@@ -82,14 +82,14 @@ namespace CollapseRebarSchedule
 
             if (!flagEndCellFound)
             {
-                TaskDialog.Show("Ошибка", "Не найден столбец, отделяющий скрытые расчетные столбы. Имя столбца должно начинаться с символа =");
+                TaskDialog.Show(MyStrings.Error, MyStrings.ErrorNoEndColumn);
                 return Result.Failed;
             }
 
             int allFields = 0, hiddenFields = 0;
             using (Transaction t = new Transaction(doc))
             {
-                t.Start("Отобразить все ячейки");
+                t.Start(MyStrings.TransactionName);
                 for (int i = firstWeightCell; i < borderCell; i++)
                 {
                     ScheduleField sfield = sdef.GetField(i);
@@ -129,7 +129,7 @@ namespace CollapseRebarSchedule
                 t.Commit();
             }
             int openedFields = allFields - hiddenFields;
-            BalloonTip.Show("Отчет", $"Выполнено! Полей найдено {allFields}, отображено {openedFields}");
+            BalloonTip.Show(MyStrings.Result, $"{MyStrings.ResultMessage1} {allFields}, {MyStrings.ResultMessage2} {openedFields}");
             return Result.Succeeded;
         }
 
